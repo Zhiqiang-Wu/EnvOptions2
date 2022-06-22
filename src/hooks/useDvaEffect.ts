@@ -7,7 +7,7 @@ const useDvaEffect = () => {
 
     return {
         listVideoInputDevices: (): Promise<Result> => dispatch(listVideoInputDevices()),
-        openScan: (): void => dispatch(openScan()),
+        openScan: ({deviceId}: {deviceId: string}): void => dispatch(openScan({ deviceId })),
         closeScan: (): void => dispatch(closeScan()),
     };
 };
