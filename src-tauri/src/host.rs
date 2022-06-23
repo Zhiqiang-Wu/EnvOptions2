@@ -79,9 +79,6 @@ pub fn host_list_hosts(state: State<MyState>) -> Value {
     let system_hosts: &Vec<Value> = result1.get("data").unwrap().as_array().unwrap();
     let database_hosts: &Vec<Value> = result2.get("data").unwrap().as_array().unwrap();
 
-    // 系统中存在，数据库中不存在的
-    let mut v: Vec<&Value> = Vec::new();
-    // 批量执行语句
     let mut sql = String::new();
 
     for system_host in system_hosts {
@@ -94,17 +91,15 @@ pub fn host_list_hosts(state: State<MyState>) -> Value {
             }
         }
         if !contains {
-            v.push(system_host);
-            sql.push_str("INSERT INTO host (ip, realm) VALUES (?1, ?2);");
+            sql.push_str(format!("INSERT INTO host (ip, realm) VALUES ('{}', '{}');",
+                                 system_host.get("ip").unwrap().as_str().unwrap(),
+                                 system_host.get("realm").unwrap().as_str().unwrap()).as_str());
         }
     }
 
     let mut batch = Batch::new(connection, sql.as_str());
     while let Some(mut stmt) = batch.next().unwrap() {
-        let system_host = v.pop().unwrap();
-        let ip = system_host.get("ip").unwrap().as_str().unwrap();
-        let realm = system_host.get("realm").unwrap().as_str().unwrap();
-        stmt.execute([ip, realm]).unwrap();
+        stmt.execute([]).unwrap();
     }
 
     let result3 = list_database_hosts(connection);

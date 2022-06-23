@@ -19,4 +19,12 @@ declare global {
         readonly realm: string;
         readonly selected: boolean;
     }
+
+    type Env = {
+        readonly id: Number;
+        readonly name: string;
+        readonly type: 'REG_SZ' | 'REG_EXPAND_SZ';
+        readonly value: string;
+        readonly selected: boolean;
+    }
 }

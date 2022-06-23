@@ -1,4 +1,15 @@
-import { listVideoInputDevices, closeScan, openScan, listHosts, insertHost, deleteHost } from '@/actions/actions';
+import {
+    listVideoInputDevices,
+    closeScan,
+    openScan,
+    listHosts,
+    insertHost,
+    deleteHost,
+    listEnvs,
+    setEnv,
+    deleteEnv,
+    insertEnv,
+} from '@/actions/actions';
 import { useDispatch } from '@umijs/max';
 
 const useDvaEffect = () => {
@@ -13,6 +24,14 @@ const useDvaEffect = () => {
         deleteHost: (id: Number): Promise<Result> => dispatch(deleteHost(id)),
         insertHost: ({ ip, realm }: { ip: string, realm: string }): Promise<Result> => {
             return dispatch(insertHost({ ip, realm }));
+        },
+        listEnvs: (): Promise<Result> => dispatch(listEnvs()),
+        setEnv: ({ selected, name, value }: { selected: boolean, name: string, value?: string }): Promise<Result> => {
+            return dispatch(setEnv({ selected, name, value }));
+        },
+        deleteEnv: (id: Number): Promise<Result> => dispatch(deleteEnv(id)),
+        insertEnv: ({ name, value }: { name: string, value: string }): Promise<Result> => {
+            return dispatch(insertEnv({ name, value }));
         },
     };
 };
