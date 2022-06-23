@@ -2,7 +2,6 @@ use tauri::{command, State};
 use serde_json::{json, Value};
 use std::fs;
 use regex::Regex;
-use log::{error};
 use rusqlite::{Batch, Connection};
 use crate::MyState;
 
@@ -17,7 +16,6 @@ fn list_system_hosts() -> Value {
     let read_result = fs::read("C:\\Windows\\System32\\drivers\\etc\\hosts");
     if read_result.is_err() {
         let err = read_result.unwrap_err();
-        error!("{}", err);
         return json!({
             "code": 300000,
             "message": err.to_string()
@@ -135,5 +133,35 @@ pub fn host_list_hosts(state: State<MyState>) -> Value {
     json!({
         "code": 200000,
         "data": hosts
+    })
+}
+
+#[command]
+pub fn host_insert_host(ip: String, realm: String, state: State<MyState>) -> Value {
+    let insert_result = state.connection.execute("INSERT INTO host (ip, realm) VALUES (?1, ?2)", [ip, realm]);
+    if insert_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": insert_result.unwrap_err().to_string()
+        });
+    }
+
+    json!({
+        "code": 200000
+    })
+}
+
+#[command]
+pub fn host_delete_host(id: u32, state: State<MyState>) -> Value {
+    let delete_result = state.connection.execute("DELETE FROM host WHERE id = ?1", [id]);
+    if delete_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": delete_result.unwrap_err().to_string()
+        });
+    }
+
+    json!({
+        "code": 200000
     })
 }

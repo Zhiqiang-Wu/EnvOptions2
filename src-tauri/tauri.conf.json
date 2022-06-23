@@ -29,7 +29,7 @@
                 "icons/icon.icns",
                 "icons/icon.ico"
             ],
-            "identifier": "wzq.env.options",
+            "identifier": "EnvOptions2",
             "longDescription": "",
             "macOS": {
                 "entitlements": null,
@@ -38,7 +38,9 @@
                 "providerShortName": null,
                 "signingIdentity": null
             },
-            "resources": [],
+            "resources": [
+                "resources/base.db3"
+            ],
             "shortDescription": "",
             "targets": "all",
             "windows": {

@@ -1,0 +1,13 @@
+import { invoke } from '@tauri-apps/api/tauri';
+
+export const listHosts = (): Promise<Result> => {
+    return invoke('host_list_hosts', {});
+};
+
+export const insertHost = ({ ip, realm }): Promise<Result> => {
+    return invoke('host_insert_host', { ip, realm });
+};
+
+export const deleteHost = (id): Promise<Result> => {
+    return invoke('host_delete_host', { id });
+};
