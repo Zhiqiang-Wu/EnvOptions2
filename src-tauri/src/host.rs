@@ -160,3 +160,52 @@ pub fn host_delete_host(id: u32, state: State<MyState>) -> Value {
         "code": 200000
     })
 }
+
+#[command]
+pub fn host_set_host(selected: bool, ip: String, realm: String) -> Value {
+    let is_host = Regex::new("^((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}( +)([^ \n\r]+)$").unwrap();
+
+    let read_result = fs::read("C:\\Windows\\System32\\drivers\\etc\\hosts");
+    if read_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": read_result.unwrap_err().to_string()
+        });
+    }
+
+    let data = read_result.unwrap();
+    let new_str: String;
+
+    if selected {
+        let mut str = String::from_utf8(data).unwrap();
+        str.push_str(format!("\n{} {}\n", ip, realm).as_str());
+        new_str = str;
+    } else {
+        let str = String::from_utf8(data).unwrap();
+        let split = str.split("\n");
+        let v: Vec<String> = split.filter(|str| {
+            if is_host.is_match(str) {
+                let (ip2, realm2) = str_to_host(str);
+                if ip == ip2 && realm == realm2 {
+                    return false;
+                }
+            }
+            return true;
+        }).map(|str| {
+            return str.to_string();
+        }).collect();
+        new_str = v.join("\n");
+    }
+
+    let write_result = fs::write("C:\\Windows\\System32\\drivers\\etc\\hosts", new_str);
+    if write_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": write_result.unwrap_err().to_string()
+        });
+    }
+
+    json!({
+        "code": 200000
+    })
+}

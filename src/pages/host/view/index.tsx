@@ -1,10 +1,18 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-components';
-import { Table, Popconfirm, Tooltip, Typography, Button } from 'antd';
+import { Table, Tooltip, Typography, Button, Spin } from 'antd';
 import { useCreation } from 'ahooks';
 import { DeleteOutlined } from '@ant-design/icons';
 
-const HostView = ({ title, loading, dataSource, selectedRowKeys, onSelectedChange, onDelete, onInsert }) => {
+const HostView = ({
+                      loading,
+                      dataSource,
+                      selectedRowKeys,
+                      onSelectedChange,
+                      onDelete,
+                      onInsert,
+                      deleteButtonDisabled,
+                  }) => {
 
     const columns = useCreation(() => [
         {
@@ -22,35 +30,32 @@ const HostView = ({ title, loading, dataSource, selectedRowKeys, onSelectedChang
             width: 90,
             render: (record) => {
                 return (
-                    <Popconfirm
-                        title='确认删除？'
-                        onConfirm={() => onDelete(record)}
-                    >
-                        <Tooltip title='删除'>
-                            <Typography.Link>
-                                <DeleteOutlined />
-                            </Typography.Link>
-                        </Tooltip>
-                    </Popconfirm>
+                    <Tooltip title='Delete'>
+                        <Typography.Link disabled={deleteButtonDisabled(record)}>
+                            <DeleteOutlined onClick={() => onDelete(record)} />
+                        </Typography.Link>
+                    </Tooltip>
                 );
             },
         },
     ], []);
 
     return (
-        <PageContainer title={title} loading={loading}>
-            <Button onClick={onInsert} type='primary' style={{ marginBottom: 20 }}>添加</Button>
-            <Table
-                columns={columns}
-                rowKey={(record) => record.id}
-                dataSource={dataSource}
-                rowSelection={{
-                    hideSelectAll: true,
-                    selectedRowKeys,
-                    onChange: onSelectedChange,
-                }}
-            />
-        </PageContainer>
+        <Spin size='large' spinning={loading}>
+            <PageContainer title='Host'>
+                <Button onClick={onInsert} type='primary' style={{ marginBottom: 20 }}>Insert</Button>
+                <Table
+                    columns={columns}
+                    rowKey={(record) => record.id}
+                    dataSource={dataSource}
+                    rowSelection={{
+                        hideSelectAll: true,
+                        selectedRowKeys,
+                        onChange: onSelectedChange,
+                    }}
+                />
+            </PageContainer>
+        </Spin>
     );
 };
 

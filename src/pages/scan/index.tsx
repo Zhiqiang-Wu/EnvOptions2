@@ -56,7 +56,7 @@ const ScanPage = () => {
             (state) => state.loading.effects[OPEN_SCAN],
             (state) => state.loading.effects[CLOSE_SCAN],
         ], (listVideoInputDevicesLoading, openScanLoading, closeScanLoading) => {
-            return listVideoInputDevicesLoading || openScanLoading || closeScanLoading;
+            return !!listVideoInputDevicesLoading || !!openScanLoading || !!closeScanLoading;
         })(state),
         selectedRowKeys: createSelector((state) => {
             return state.scanModel.get('selectedRowKeys');
@@ -76,7 +76,6 @@ const ScanPage = () => {
 
     return (
         <ScanView
-            // TODO local
             title={'Scan'}
             loading={loading}
             dataSource={dataSource}
@@ -84,10 +83,8 @@ const ScanPage = () => {
             selectedRowKeys={selectedRowKeys}
             onSwitchChange={onSwitchChange}
             enable={enable}
-            // TODO local
-            checkedChildren={'开启'}
-            // TODO local
-            unCheckedChildren={'关闭'}
+            checkedChildren={'On'}
+            unCheckedChildren={'Off'}
             switchDisabled={switchDisabled}
         />
     );
