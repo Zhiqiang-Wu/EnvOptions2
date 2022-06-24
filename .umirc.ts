@@ -14,16 +14,19 @@ export default defineConfig({
         {
             name: 'env',
             path: '/env',
+            icon: 'windows',
             component: './env',
         },
         {
             name: 'host',
             path: '/host',
+            icon: 'cluster',
             component: './host',
         },
         {
             name: 'scan',
             path: '/scan',
+            icon: 'qrcode',
             component: './scan',
         },
     ],

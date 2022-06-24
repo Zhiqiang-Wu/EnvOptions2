@@ -9,6 +9,7 @@ import {
     setEnv,
     deleteEnv,
     insertEnv,
+    setHost,
 } from '@/actions/actions';
 import { useDispatch } from '@umijs/max';
 
@@ -24,6 +25,9 @@ const useDvaEffect = () => {
         deleteHost: (id: Number): Promise<Result> => dispatch(deleteHost(id)),
         insertHost: ({ ip, realm }: { ip: string, realm: string }): Promise<Result> => {
             return dispatch(insertHost({ ip, realm }));
+        },
+        setHost: ({ selected, ip, realm }: { selected: boolean, ip: string, realm: string }): Promise<Result> => {
+            return dispatch(setHost({ selected, ip, realm }));
         },
         listEnvs: (): Promise<Result> => dispatch(listEnvs()),
         setEnv: ({ selected, name, value }: { selected: boolean, name: string, value?: string }): Promise<Result> => {
