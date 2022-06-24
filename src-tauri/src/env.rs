@@ -2,9 +2,9 @@ use tauri::{command, State};
 use serde_json::{json, Value};
 use registry::{Hive, Security, RegKey};
 use registry::value::Data;
-use rusqlite::{Batch, Connection};
+use rusqlite::{Batch, Connection, params};
 use crate::MyState;
-use serde_json::Value::{Null};
+use serde_json::Value::Null;
 use utfx::U16CString;
 
 fn list_system_envs() -> Value {
@@ -138,7 +138,7 @@ pub fn env_list_envs(state: State<MyState>) -> Value {
 
 #[command]
 pub fn env_set_env(selected: bool, name: String, value: String) -> Value {
-    let reg_key: RegKey = Hive::LocalMachine.open("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", Security::Read).unwrap();
+    let reg_key: RegKey = Hive::LocalMachine.open("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", Security::Write).unwrap();
 
     if selected {
         let set_result = reg_key.set_value(name, &Data::String(U16CString::from_str(value).unwrap()));
@@ -164,14 +164,28 @@ pub fn env_set_env(selected: bool, name: String, value: String) -> Value {
 }
 
 #[command]
-pub fn env_insert_env() -> Value {
+pub fn env_insert_env(name: String, value: String, state: State<MyState>) -> Value {
+    let execute_result = state.connection.execute("INSERT INTO env (name, type, value) VALUES (?1, ?2, ?3)", params![name, "REG_SZ", value]);
+    if execute_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": execute_result.unwrap_err().to_string()
+        });
+    }
     json!({
         "code": 200000
     })
 }
 
 #[command]
-pub fn env_delete_env() -> Value {
+pub fn env_delete_env(id: u32, state: State<MyState>) -> Value {
+    let execute_result = state.connection.execute("DELETE FROM env WHERE id = ?1", params![id]);
+    if execute_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": execute_result.unwrap_err().to_string()
+        });
+    }
     json!({
         "code": 200000
     })

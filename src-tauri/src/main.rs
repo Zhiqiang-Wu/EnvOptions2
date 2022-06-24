@@ -10,8 +10,9 @@ mod host;
 use tauri::{App, Manager, Wry};
 use std::fs;
 use rusqlite::Connection;
+use env::{env_list_envs, env_set_env, env_delete_env, env_insert_env};
 use scan::{scan_key_press};
-use host::{host_list_hosts, host_delete_host, host_insert_host};
+use host::{host_list_hosts, host_delete_host, host_insert_host, host_set_host};
 
 pub struct MyState {
     connection: Connection,
@@ -78,7 +79,7 @@ fn main() {
             Ok(())
         })
         // .menu(tauri::Menu::os_default(&context.package_info().name))
-        .invoke_handler(tauri::generate_handler![scan_key_press, host_list_hosts, host_delete_host, host_insert_host])
+        .invoke_handler(tauri::generate_handler![env_list_envs, env_set_env, env_delete_env, env_insert_env, scan_key_press, host_list_hosts, host_delete_host, host_insert_host, host_set_host])
         .run(context)
         .expect("error while running tauri application");
 }
