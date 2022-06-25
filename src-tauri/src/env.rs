@@ -1,3 +1,4 @@
+use std::ptr::null_mut;
 use tauri::{command, State};
 use serde_json::{json, Value};
 use registry::{Hive, Security, RegKey};
@@ -6,6 +7,7 @@ use rusqlite::{Batch, Connection, params};
 use crate::MyState;
 use serde_json::Value::Null;
 use utfx::U16CString;
+use winapi::um::winuser::{HWND_BROADCAST, SendMessageTimeoutA, SMTO_ABORTIFHUNG, WM_SETTINGCHANGE};
 
 fn list_system_envs() -> Value {
     let reg_key: RegKey = Hive::LocalMachine.open("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", Security::Read).unwrap();
@@ -138,14 +140,21 @@ pub fn env_list_envs(state: State<MyState>) -> Value {
 
 #[command]
 pub fn env_set_env(selected: bool, name: String, value: String) -> Value {
-    let reg_key: RegKey = Hive::LocalMachine.open("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", Security::Write).unwrap();
+    let open_result = Hive::LocalMachine.open("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", Security::Write);
+    if open_result.is_err() {
+        return json!({
+            "code": 300000,
+            "message": "failed"
+        });
+    }
+    let reg_key: RegKey = open_result.unwrap();
 
     if selected {
         let set_result = reg_key.set_value(name, &Data::String(U16CString::from_str(value).unwrap()));
         if set_result.is_err() {
             return json!({
                 "code": 300000,
-                "message": "失败"
+                "message": "failed"
             });
         }
     } else {
@@ -153,14 +162,18 @@ pub fn env_set_env(selected: bool, name: String, value: String) -> Value {
         if delete_result.is_err() {
             return json!({
                 "code": 300000,
-                "message": "失败"
+                "message": "failed"
             });
         }
     }
 
-    json!({
+    unsafe {
+        SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, "Environment".as_ptr() as isize, SMTO_ABORTIFHUNG, 1, null_mut());
+    }
+
+    return json!({
         "code": 200000
-    })
+    });
 }
 
 #[command]
