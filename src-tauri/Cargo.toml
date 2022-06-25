@@ -23,6 +23,8 @@ regex = "1.5.6"
 rusqlite = "0.27.0"
 registry = "1.2.2"
 utfx = "0.1.0"
+log4rs = "1.1.1"
+log = "0.4.17"
 
 [features]
 # by default Tauri runs in production mode

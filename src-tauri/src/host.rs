@@ -184,7 +184,7 @@ pub fn host_set_host(selected: bool, ip: String, realm: String) -> Value {
         let str = String::from_utf8(data).unwrap();
         let split = str.split("\n");
         let v: Vec<String> = split.filter(|str| {
-            if is_host.is_match(str) {
+            if is_host.is_match(str.trim()) {
                 let (ip2, realm2) = str_to_host(str);
                 if ip == ip2 && realm == realm2 {
                     return false;

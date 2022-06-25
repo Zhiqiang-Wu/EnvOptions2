@@ -9,6 +9,14 @@ mod host;
 
 use tauri::{App, Manager, Wry};
 use std::fs;
+#[cfg(debug_assertions)]
+use log4rs::append::console::ConsoleAppender;
+#[cfg(debug_assertions)]
+use log4rs::config::{Appender, Root, Config};
+#[cfg(debug_assertions)]
+use log4rs::encode::pattern::PatternEncoder;
+#[cfg(debug_assertions)]
+use log::LevelFilter;
 use rusqlite::Connection;
 use env::{env_list_envs, env_set_env, env_delete_env, env_insert_env};
 use scan::{scan_key_press};
@@ -24,6 +32,14 @@ unsafe impl Send for MyState {}
 
 #[cfg(debug_assertions)]
 fn debug_setup(app: &mut App<Wry>) {
+    let console_appender = ConsoleAppender::builder()
+        .encoder(Box::new(PatternEncoder::new("{d(%H:%M:%S)} {l} {T} - {m}{n}")))
+        .build();
+    let config = Config::builder()
+        .appender(Appender::builder().build("stdout", Box::new(console_appender)))
+        .build(Root::builder().appender("stdout").build(LevelFilter::Debug)).unwrap();
+    log4rs::init_config(config).unwrap();
+
     let mut app_dir = app.path_resolver().resource_dir().unwrap();
     app_dir.pop();
     app_dir.push("EnvOptions2DebugRoaming");
