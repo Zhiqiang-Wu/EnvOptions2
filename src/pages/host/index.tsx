@@ -5,19 +5,24 @@ import useDvaEffect from '@/hooks/useDvaEffect';
 import { message } from 'antd';
 import { createSelector } from 'reselect';
 import { useSelector } from '@umijs/max';
-import { LIST_HOSTS, DELETE_HOST, INSERT_HOST, SET_HOST } from '@/actions/actionTypes';
+import { LIST_HOSTS, DELETE_HOST, INSERT_HOST, SET_HOST, UPDATE_HOST } from '@/actions/actionTypes';
 import InsertModal from '@/pages/host/insert-modal';
 import lodash from 'lodash';
+import EditModal from '@/pages/host/edit-modal';
 
 const HostPage = () => {
 
-    const { listHosts, deleteHost, insertHost, setHost } = useDvaEffect();
+    const { listHosts, deleteHost, insertHost, setHost, updateHost } = useDvaEffect();
 
     const [dataSource, setDataSource] = useSafeState<Array<Host>>([]);
 
-    const [insertModalVisible, { setFalse, setTrue }] = useBoolean(false);
+    const [editHost, setEditHost] = useSafeState({});
 
-    const { hostViewLoading, insertModalLoading } = useSelector((state) => ({
+    const [insertModalVisible, { setFalse: hideInsertModal, setTrue: showInsertModal }] = useBoolean(false);
+
+    const [editModalVisible, { setFalse: hideEditModal, setTrue: showEdieModal }] = useBoolean(false);
+
+    const { hostViewLoading, insertModalLoading, editModalLoading } = useSelector((state) => ({
         hostViewLoading: createSelector([
             (state) => state.loading.effects[LIST_HOSTS],
             (state) => state.loading.effects[DELETE_HOST],
@@ -29,6 +34,11 @@ const HostPage = () => {
             (state) => state.loading.effects[INSERT_HOST],
         ], (insertHostLoading) => {
             return !!insertHostLoading;
+        })(state),
+        editModalLoading: createSelector([
+            (state) => state.loading.effects[UPDATE_HOST],
+        ], (updateHostLoading) => {
+            return !!updateHostLoading;
         })(state),
     }));
 
@@ -66,7 +76,11 @@ const HostPage = () => {
         return host.selected;
     });
 
-    const onOk = useMemoizedFn(({ ip, realm }: { ip: string, realm: string }) => {
+    const editButtonDisabled = useMemoizedFn((host: Host) => {
+        return host.selected;
+    });
+
+    const onInsertModalOk = useMemoizedFn(({ ip, realm }: { ip: string, realm: string }) => {
         ip = ip.trim();
         realm = realm.trim();
 
@@ -82,7 +96,7 @@ const HostPage = () => {
             if (result.code !== 200000) {
                 throw new Error(result.message);
             }
-            setFalse();
+            hideInsertModal();
             return listHosts();
         }).then((result) => {
             if (result.code !== 200000) {
@@ -91,6 +105,23 @@ const HostPage = () => {
             setDataSource(result.data);
         }).catch((err) => {
             message.error(err);
+        });
+    });
+
+    const onEditModalOk = useMemoizedFn(({ id, ip, realm }) => {
+        updateHost({ ip, id, realm }).then((result) => {
+            if (result.code !== 200000) {
+                throw new Error(result.message);
+            }
+            hideEditModal();
+            return listHosts();
+        }).then((result) => {
+            if (result.code !== 200000) {
+                throw new Error(result.message);
+            }
+            setDataSource(result.data);
+        }).catch((err) => {
+            message.error(err.message);
         });
     });
 
@@ -108,6 +139,11 @@ const HostPage = () => {
         }).catch((err) => {
             message.error(err.message);
         });
+    });
+
+    const onEdit = useMemoizedFn((host: Host) => {
+        setEditHost(host);
+        showEdieModal();
     });
 
     useMount(() => {
@@ -128,14 +164,23 @@ const HostPage = () => {
                 selectedRowKeys={selectedRowKeys}
                 onSelectedChange={onSelectedChange}
                 onDelete={onDelete}
-                onInsert={setTrue}
+                onInsert={showInsertModal}
+                onEdit={onEdit}
                 deleteButtonDisabled={deleteButtonDisabled}
+                editButtonDisabled={editButtonDisabled}
             />
             <InsertModal
                 loading={insertModalLoading}
                 visible={insertModalVisible}
-                onCancel={setFalse}
-                onOk={onOk}
+                onCancel={hideInsertModal}
+                onOk={onInsertModalOk}
+            />
+            <EditModal
+                visible={editModalVisible}
+                onCancel={hideEditModal}
+                loading={editModalLoading}
+                onOk={onEditModalOk}
+                data={editHost}
             />
         </>
     );

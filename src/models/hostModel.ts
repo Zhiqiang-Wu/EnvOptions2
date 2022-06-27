@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import { listHosts, deleteHost, insertHost, setHost } from '@/services/hostService';
+import { listHosts, deleteHost, insertHost, setHost, updateHost } from '@/services/hostService';
 
 export default {
     namespace: 'hostModel',
@@ -16,6 +16,8 @@ export default {
         },
         * setHost({ payload }, { call }) {
             return yield call(setHost, payload);
+        }, * updateHost({ payload }, { call }) {
+            return yield call(updateHost, payload);
         },
     },
 };

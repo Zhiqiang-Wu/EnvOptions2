@@ -15,3 +15,7 @@ export const deleteHost = (id): Promise<Result> => {
 export const setHost = ({ selected, ip, realm }): Promise<Result> => {
     return invoke('host_set_host', { selected, ip, realm });
 };
+
+export const updateHost = ({ id, ip, realm }): Promise<Result> => {
+    return invoke('host_update_host', { ip, id, realm });
+};

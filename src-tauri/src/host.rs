@@ -209,3 +209,18 @@ pub fn host_set_host(selected: bool, ip: String, realm: String) -> Value {
         "code": 200000
     })
 }
+
+#[command]
+pub fn host_update_host(id: u32, ip: String, realm: String, state: State<MyState>) -> Value {
+    let update_result = state.connection.execute(format!("UPDATE host SET ip = ?1, realm = ?2 WHERE id = {};", id).as_str(), [ip, realm]);
+    if update_result.is_err() {
+        return json!({
+           "code": 300000,
+            "message": update_result.unwrap_err().to_string()
+        });
+    }
+
+    json!({
+        "code": 200000
+    })
+}

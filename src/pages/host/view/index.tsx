@@ -1,8 +1,8 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-components';
-import { Table, Tooltip, Typography, Button, Spin } from 'antd';
+import { Table, Tooltip, Typography, Button, Spin, Space } from 'antd';
 import { useCreation } from 'ahooks';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const HostView = ({
                       loading,
@@ -12,6 +12,8 @@ const HostView = ({
                       onDelete,
                       onInsert,
                       deleteButtonDisabled,
+                      editButtonDisabled,
+                      onEdit,
                   }) => {
 
     const columns = useCreation(() => [
@@ -30,11 +32,18 @@ const HostView = ({
             width: 90,
             render: (record) => {
                 return (
-                    <Tooltip title='Delete'>
-                        <Typography.Link disabled={deleteButtonDisabled(record)}>
-                            <DeleteOutlined onClick={() => onDelete(record)} />
-                        </Typography.Link>
-                    </Tooltip>
+                    <Space>
+                        <Tooltip title='Edit'>
+                            <Typography.Link disabled={editButtonDisabled(record)}>
+                                <EditOutlined onClick={() => onEdit(record)} />
+                            </Typography.Link>
+                        </Tooltip>
+                        <Tooltip title='Delete'>
+                            <Typography.Link disabled={deleteButtonDisabled(record)}>
+                                <DeleteOutlined onClick={() => onDelete(record)} />
+                            </Typography.Link>
+                        </Tooltip>
+                    </Space>
                 );
             },
         },
