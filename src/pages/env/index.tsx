@@ -4,18 +4,21 @@ import { useCreation, useMemoizedFn, useMount, useSafeState, useBoolean } from '
 import useDvaEffect from '@/hooks/useDvaEffect';
 import { useSelector } from '@umijs/max';
 import { createSelector } from 'reselect';
-import { LIST_ENVS, INSERT_ENV, DELETE_ENV, SET_ENV } from '@/actions/actionTypes';
+import { LIST_ENVS, INSERT_ENV, DELETE_ENV, SET_ENV, UPDATE_ENV } from '@/actions/actionTypes';
 import { message } from 'antd';
 import lodash from 'lodash';
 import InsertModal from '@/pages/env/insert-modal';
+import EditModal from '@/pages/env/edit-modal';
 
 const EnvPage = () => {
 
-    const { listEnvs, setEnv, insertEnv, deleteEnv } = useDvaEffect();
+    const { listEnvs, setEnv, insertEnv, deleteEnv, updateEnv } = useDvaEffect();
 
     const [dataSource, setDataSource] = useSafeState<Array<Env>>([]);
 
-    const { envViewLoading, insertModalLoading } = useSelector((state) => ({
+    const [editEnv, setEditEnv] = useSafeState({});
+
+    const { envViewLoading, insertModalLoading, editModalLoading } = useSelector((state) => ({
         envViewLoading: createSelector([
             (state) => state.loading.effects[LIST_ENVS],
             (state) => state.loading.effects[DELETE_ENV],
@@ -28,16 +31,23 @@ const EnvPage = () => {
         ], (insertEnvLoading) => {
             return !!insertEnvLoading;
         })(state),
+        editModalLoading: createSelector([
+            (state) => state.loading.effects[UPDATE_ENV],
+        ], (updateEnvLoading) => {
+            return !!updateEnvLoading;
+        })(state),
     }));
 
-    const [insertModalVisible, { setTrue, setFalse }] = useBoolean(false);
+    const [insertModalVisible, { setTrue: showInsertModal, setFalse: hideInsertModal }] = useBoolean(false);
 
-    const onOk = useMemoizedFn(({ name, value }: { name: string, value: string }) => {
+    const [editModalVisible, { setTrue: showEditModal, setFalse: hideEditModal }] = useBoolean(false);
+
+    const onInsertModalOk = useMemoizedFn(({ name, value }: { name: string, value: string }) => {
         name = name.trim();
         value = value.trim();
 
         const exists = dataSource.find((env) => {
-            return env.name === name && env.value === name;
+            return env.name === name && env.value === value;
         });
         if (exists) {
             message.error('Exists');
@@ -54,7 +64,35 @@ const EnvPage = () => {
             if (result.code !== 200000) {
                 throw new Error(result.message);
             }
-            setFalse();
+            hideInsertModal();
+            return listEnvs();
+        }).then((result) => {
+            if (result.code !== 200000) {
+                throw new Error(result.message);
+            }
+            setDataSource(result.data);
+        }).catch((err) => {
+            message.error(err.message);
+        });
+    });
+
+    const onEditModalOk = useMemoizedFn(({ id, name, value, selected }) => {
+        name = name.trim();
+        value = value.trim();
+
+        const exists = dataSource.find((env) => {
+            return env.name === name && env.value === value;
+        });
+        if (exists) {
+            message.error('Exists');
+            return;
+        }
+
+        updateEnv({ id, name, value, selected }).then((result) => {
+            if (result.code !== 200000) {
+                throw new Error(result.message);
+            }
+            hideEditModal();
             return listEnvs();
         }).then((result) => {
             if (result.code !== 200000) {
@@ -68,6 +106,15 @@ const EnvPage = () => {
 
     const deleteButtonDisabled = useMemoizedFn((env: Env) => {
         return env.selected || env.type === 'REG_EXPAND_SZ';
+    });
+
+    const editButtonDisabled = useMemoizedFn(() => {
+        return false;
+    });
+
+    const onEdit = useMemoizedFn((env: Env) => {
+        setEditEnv(env);
+        showEditModal();
     });
 
     const checkboxDisabled = useMemoizedFn((env: Env) => {
@@ -137,16 +184,25 @@ const EnvPage = () => {
                 dataSource={dataSource}
                 selectedRowKeys={selectedRowKeys}
                 onSelectedChange={onSelectedChange}
-                onInsert={setTrue}
+                onInsert={showInsertModal}
                 onDelete={onDelete}
                 deleteButtonDisabled={deleteButtonDisabled}
                 checkboxDisabled={checkboxDisabled}
+                editButtonDisabled={editButtonDisabled}
+                onEdit={onEdit}
             />
             <InsertModal
                 loading={insertModalLoading}
-                onOk={onOk}
-                onCancel={setFalse}
+                onOk={onInsertModalOk}
+                onCancel={hideInsertModal}
                 visible={insertModalVisible}
+            />
+            <EditModal
+                data={editEnv}
+                visible={editModalVisible}
+                loading={editModalLoading}
+                onCancel={hideEditModal}
+                onOk={onEditModalOk}
             />
         </>
     );

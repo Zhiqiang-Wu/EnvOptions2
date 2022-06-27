@@ -1,8 +1,8 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-components';
-import { Table, Button, Typography, Tooltip, Spin } from 'antd';
+import { Table, Button, Typography, Tooltip, Spin, Space } from 'antd';
 import { useCreation } from 'ahooks';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const EnvView = ({
                      loading,
@@ -13,6 +13,8 @@ const EnvView = ({
                      deleteButtonDisabled,
                      onDelete,
                      checkboxDisabled,
+                     editButtonDisabled,
+                     onEdit,
                  }) => {
 
     const columns = useCreation(() => ([
@@ -35,11 +37,19 @@ const EnvView = ({
             width: 90,
             render: (record) => {
                 return (
-                    <Tooltip title='Delete'>
-                        <Typography.Link disabled={deleteButtonDisabled(record)}>
-                            <DeleteOutlined onClick={() => onDelete(record)} />
-                        </Typography.Link>
-                    </Tooltip>
+                    <Space>
+                        <Tooltip title='Edit'>
+                            <Typography.Link disabled={editButtonDisabled(record)}>
+                                <EditOutlined onClick={() => onEdit(record)} />
+                            </Typography.Link>
+                        </Tooltip>
+                        <Tooltip title='Delete'>
+                            <Typography.Link disabled={deleteButtonDisabled(record)}>
+                                <DeleteOutlined onClick={() => onDelete(record)} />
+                            </Typography.Link>
+                        </Tooltip>
+                    </Space>
+
                 );
             },
         },

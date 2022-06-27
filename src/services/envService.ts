@@ -12,6 +12,10 @@ export const insertEnv = ({ name, value }): Promise<Result> => {
     return invoke('env_insert_env', { name, value });
 };
 
-export const deleteEnv = (id: Number) => {
+export const deleteEnv = (id): Promise<Result> => {
     return invoke('env_delete_env', { id });
+};
+
+export const updateEnv = ({ id, name, value, selected }): Promise<Result> => {
+    return invoke('env_update_env', { id, name, value, selected });
 };

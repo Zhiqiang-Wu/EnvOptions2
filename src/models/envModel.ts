@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import { listEnvs, setEnv, insertEnv, deleteEnv } from '@/services/envService';
+import { listEnvs, setEnv, insertEnv, deleteEnv, updateEnv } from '@/services/envService';
 
 export default {
     namespace: 'envModel',
@@ -16,6 +16,9 @@ export default {
         },
         * deleteEnv({ payload }, { call }) {
             return yield call(deleteEnv, payload);
+        },
+        * updateEnv({ payload }, { call }) {
+            return yield call(updateEnv, payload);
         },
     },
 };

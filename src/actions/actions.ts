@@ -13,6 +13,7 @@ import {
     INSERT_ENV,
     SET_HOST,
     UPDATE_HOST,
+    UPDATE_ENV,
 } from '@/actions/actionTypes';
 
 export const listVideoInputDevices = createAction(LIST_VIDEO_INPUT_DEVICES);
@@ -30,3 +31,4 @@ export const listEnvs = createAction(LIST_ENVS);
 export const setEnv = createAction(SET_ENV);
 export const deleteEnv = createAction(DELETE_ENV);
 export const insertEnv = createAction(INSERT_ENV);
+export const updateEnv = createAction(UPDATE_ENV);

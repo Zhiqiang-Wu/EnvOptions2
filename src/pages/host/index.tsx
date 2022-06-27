@@ -109,6 +109,17 @@ const HostPage = () => {
     });
 
     const onEditModalOk = useMemoizedFn(({ id, ip, realm }) => {
+        ip = ip.trim();
+        realm = realm.trim();
+
+        const exists = dataSource.find((host: Host) => {
+            return host.ip === ip && host.realm === realm;
+        });
+        if (exists) {
+            message.error('Exists');
+            return;
+        }
+
         updateHost({ ip, id, realm }).then((result) => {
             if (result.code !== 200000) {
                 throw new Error(result.message);

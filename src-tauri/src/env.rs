@@ -203,3 +203,25 @@ pub fn env_delete_env(id: u32, state: State<MyState>) -> Value {
         "code": 200000
     })
 }
+
+#[command]
+pub fn env_update_env(id: u32, name: String, value: String, selected: bool, state: State<MyState>) -> Value {
+    if selected {
+        let result = env_set_env(true, name.clone(), value.clone());
+        if result.get("code").unwrap().as_u64().unwrap() != 200000 {
+            return result;
+        }
+    }
+
+    let update_result = state.connection.execute(format!("UPDATE env SET name = ?1, value = ?2 WHERE id = {};", id).as_str(), [name, value]);
+    if update_result.is_err() {
+        return json!({
+           "code": 300000,
+            "message": update_result.unwrap_err().to_string()
+        });
+    }
+
+    json!({
+        "code": 200000
+    })
+}

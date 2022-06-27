@@ -11,6 +11,7 @@ import {
     insertEnv,
     setHost,
     updateHost,
+    updateEnv,
 } from '@/actions/actions';
 import { useDispatch } from '@umijs/max';
 
@@ -40,6 +41,14 @@ const useDvaEffect = () => {
         },
         updateHost: ({ id, ip, realm }: { id: number, ip: string, realm: string }): Promise<Result> => {
             return dispatch(updateHost({ id, ip, realm }));
+        },
+        updateEnv: ({
+                        id,
+                        name,
+                        value,
+                        selected,
+                    }: { id: number, name: string, value: string, selected: boolean }): Promise<Result> => {
+            return dispatch(updateEnv({id, name, value, selected}));
         },
     };
 };

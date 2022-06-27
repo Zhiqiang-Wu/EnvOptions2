@@ -13,3 +13,4 @@ export const LIST_ENVS = 'envModel/listEnvs';
 export const SET_ENV = 'envModel/setEnv';
 export const INSERT_ENV = 'envModel/insertEnv';
 export const DELETE_ENV = 'envModel/deleteEnv';
+export const UPDATE_ENV = 'envModel/updateEnv';
