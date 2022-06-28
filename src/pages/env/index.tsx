@@ -9,6 +9,7 @@ import { message } from 'antd';
 import lodash from 'lodash';
 import InsertModal from '@/pages/env/insert-modal';
 import EditModal from '@/pages/env/edit-modal';
+import EditModal2 from '@/pages/env/edit-modal-2';
 
 const EnvPage = () => {
 
@@ -16,7 +17,7 @@ const EnvPage = () => {
 
     const [dataSource, setDataSource] = useSafeState<Array<Env>>([]);
 
-    const [editEnv, setEditEnv] = useSafeState({});
+    const [editEnv, setEditEnv] = useSafeState<any>({});
 
     const { envViewLoading, insertModalLoading, editModalLoading } = useSelector((state) => ({
         envViewLoading: createSelector([
@@ -41,6 +42,8 @@ const EnvPage = () => {
     const [insertModalVisible, { setTrue: showInsertModal, setFalse: hideInsertModal }] = useBoolean(false);
 
     const [editModalVisible, { setTrue: showEditModal, setFalse: hideEditModal }] = useBoolean(false);
+
+    const [editModalVisible2, { setTrue: showEditModal2, setFalse: hideEditModal2 }] = useBoolean(false);
 
     const onInsertModalOk = useMemoizedFn(({ name, value }: { name: string, value: string }) => {
         name = name.trim();
@@ -104,6 +107,23 @@ const EnvPage = () => {
         });
     });
 
+    const onEditModalOk2 = useMemoizedFn((v) => {
+        updateEnv({ id: editEnv.id, name: editEnv.name, value: v, selected: editEnv.selected }).then((result) => {
+            if (result.code !== 200000) {
+                throw new Error(result.message);
+            }
+            hideEditModal2();
+            return listEnvs();
+        }).then((result) => {
+            if (result.code !== 200000) {
+                throw new Error(result.message);
+            }
+            setDataSource(result.data);
+        }).catch((err) => {
+            message.error(err.message);
+        });
+    });
+
     const deleteButtonDisabled = useMemoizedFn((env: Env) => {
         return env.selected || env.type === 'REG_EXPAND_SZ';
     });
@@ -114,7 +134,11 @@ const EnvPage = () => {
 
     const onEdit = useMemoizedFn((env: Env) => {
         setEditEnv(env);
-        showEditModal();
+        if (env.name.toUpperCase() === 'PATH') {
+            showEditModal2();
+        } else {
+            showEditModal();
+        }
     });
 
     const checkboxDisabled = useMemoizedFn((env: Env) => {
@@ -203,6 +227,13 @@ const EnvPage = () => {
                 loading={editModalLoading}
                 onCancel={hideEditModal}
                 onOk={onEditModalOk}
+            />
+            <EditModal2
+                data={editEnv}
+                visible={editModalVisible2}
+                onCancel={hideEditModal2}
+                onOk={onEditModalOk2}
+                loading={editModalLoading}
             />
         </>
     );
