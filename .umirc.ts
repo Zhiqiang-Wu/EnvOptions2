@@ -29,7 +29,12 @@ export default defineConfig({
             icon: 'qrcode',
             component: './scan',
         },
+        {
+            name: 'about',
+            path: '/about',
+            icon: 'infoCircle',
+            component: './about',
+        },
     ],
     npmClient: 'pnpm',
 });
-
