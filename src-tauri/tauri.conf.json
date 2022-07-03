@@ -7,7 +7,7 @@
         "distDir": "../dist"
     },
     "package": {
-        "productName": "Env Options",
+        "productName": "EnvOptions",
         "version": "../package.json"
     },
     "tauri": {
@@ -25,9 +25,7 @@
                 "depends": []
             },
             "externalBin": [],
-            "icon": [
-                "icons/icon.ico"
-            ],
+            "icon": ["icons/icon.ico"],
             "identifier": "EnvOptions2",
             "longDescription": "",
             "macOS": {
@@ -37,9 +35,7 @@
                 "providerShortName": null,
                 "signingIdentity": null
             },
-            "resources": [
-                "resources/base.db3"
-            ],
+            "resources": ["resources/base.db3"],
             "shortDescription": "",
             "targets": "all",
             "windows": {
