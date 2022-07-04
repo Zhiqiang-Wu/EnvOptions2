@@ -10,6 +10,4 @@
 /dist
 /.mfsu
 /.idea
-/pnpm-lock.yaml
 /src-tauri/target
-/src-tauri/Cargo.lock
