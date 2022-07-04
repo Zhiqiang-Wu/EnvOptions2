@@ -81,11 +81,21 @@ pub fn env_list_envs(state: State<MyState>) -> Value {
     for system_env in system_envs {
         let mut temp = &Null;
 
+        let system_env_type = system_env.get("type").unwrap().as_str().unwrap();
+
         for database_env in database_envs {
-            if system_env.get("name").unwrap().to_string().to_uppercase() == database_env.get("name").unwrap().to_string().to_uppercase()
-                && system_env.get("value").unwrap() == database_env.get("value").unwrap() {
+            if system_env.get("name").unwrap().to_string().to_uppercase() != database_env.get("name").unwrap().to_string().to_uppercase() {
+                continue;
+            }
+
+            if system_env_type == "REG_EXPAND_SZ" {
                 temp = database_env;
                 break;
+            } else {
+                if system_env.get("value").unwrap() == database_env.get("value").unwrap() {
+                    temp = database_env;
+                    break;
+                }
             }
         }
 
@@ -95,10 +105,20 @@ pub fn env_list_envs(state: State<MyState>) -> Value {
                                  system_env.get("type").unwrap().as_str().unwrap(),
                                  system_env.get("value").unwrap().as_str().unwrap()).as_str());
         } else {
-            if system_env.get("name").unwrap() != temp.get("name").unwrap() {
-                sql.push_str(format!("UPDATE env SET name = '{}' WHERE id = {}",
-                                     system_env.get("name").unwrap().as_str().unwrap(),
-                                     temp.get("id").unwrap().as_u64().unwrap()).as_str());
+            if system_env_type == "REG_EXPAND_SZ" {
+                if system_env.get("name").unwrap() != temp.get("name").unwrap()
+                    || system_env.get("value").unwrap() != temp.get("value").unwrap() {
+                    sql.push_str(format!("UPDATE env SET name = '{}', value = '{}' WHERE id = {}",
+                                         system_env.get("name").unwrap().as_str().unwrap(),
+                                         system_env.get("value").unwrap().as_str().unwrap(),
+                                         temp.get("id").unwrap().as_u64().unwrap()).as_str());
+                }
+            } else {
+                if system_env.get("name").unwrap() != temp.get("name").unwrap() {
+                    sql.push_str(format!("UPDATE env SET name = '{}' WHERE id = {}",
+                                         system_env.get("name").unwrap().as_str().unwrap(),
+                                         temp.get("id").unwrap().as_u64().unwrap()).as_str());
+                }
             }
         }
     }
