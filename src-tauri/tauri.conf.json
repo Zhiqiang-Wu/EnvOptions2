@@ -4,7 +4,8 @@
         "beforeBuildCommand": "",
         "beforeDevCommand": "",
         "devPath": "http://localhost:8000",
-        "distDir": "../dist"
+        "distDir": "../dist",
+        "withGlobalTauri": true
     },
     "package": {
         "productName": "EnvOptions",
@@ -56,7 +57,9 @@
                 "height": 600,
                 "resizable": true,
                 "title": "Env Options",
-                "width": 800
+                "width": 800,
+                "visible": false,
+                "center": true
             }
         ]
     }

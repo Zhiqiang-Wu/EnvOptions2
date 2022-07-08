@@ -7,7 +7,7 @@ mod env;
 mod scan;
 mod host;
 
-use tauri::{App, Manager, Wry};
+use tauri::{App, Manager, Wry, command, Window};
 use std::fs;
 #[cfg(debug_assertions)]
 use log4rs::append::console::ConsoleAppender;
@@ -84,6 +84,14 @@ fn setup(app: &mut App<Wry>) {
     });
 }
 
+#[command]
+async fn close_splashscreen(window: Window<Wry>) {
+    if let Some(splashscreen) = window.get_window("splashscreen") {
+        splashscreen.close().unwrap();
+    }
+    window.get_window("main").unwrap().show().unwrap();
+}
+
 fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
@@ -95,7 +103,20 @@ fn main() {
             Ok(())
         })
         // .menu(tauri::Menu::os_default(&context.package_info().name))
-        .invoke_handler(tauri::generate_handler![env_list_envs, env_update_env, env_set_env, env_delete_env, env_insert_env, scan_key_press, host_list_hosts, host_delete_host, host_insert_host, host_set_host, host_update_host])
+        .invoke_handler(tauri::generate_handler![
+            env_list_envs,
+            env_update_env,
+            env_set_env,
+            env_delete_env,
+            env_insert_env,
+            scan_key_press,
+            host_list_hosts,
+            host_delete_host,
+            host_insert_host,
+            host_set_host,
+            host_update_host,
+            close_splashscreen
+        ])
         .run(context)
         .expect("error while running tauri application");
 }

@@ -6,6 +6,13 @@ export default defineConfig({
     layout: {
         title: 'Env Options',
     },
+    headScripts: [
+        `
+        document.addEventListener('DOMContentLoaded', () => {
+            window.__TAURI__.invoke('close_splashscreen');
+        });
+        `,
+    ],
     routes: [
         {
             path: '/',
