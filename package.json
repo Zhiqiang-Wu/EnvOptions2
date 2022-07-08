@@ -18,7 +18,7 @@
         "umi:dev": "max dev"
     },
     "lint-staged": {
-        "*.{js,jsx,json}": [
+        "*.{js,jsx,json,html}": [
             "prettier --write"
         ],
         "*.ts?(x)": [
