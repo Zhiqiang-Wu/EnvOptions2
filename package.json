@@ -17,14 +17,6 @@
         "umi:build": "max build",
         "umi:dev": "max dev"
     },
-    "lint-staged": {
-        "*.{js,jsx,json,html}": [
-            "prettier --write"
-        ],
-        "*.ts?(x)": [
-            "prettier --parser=typescript --write"
-        ]
-    },
     "dependencies": {
         "@ant-design/icons": "^4.7.0",
         "@ant-design/pro-components": "^1.1.3",
