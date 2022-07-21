@@ -7,7 +7,7 @@ mod env;
 mod scan;
 mod host;
 
-use tauri::{App, Manager, Wry, command, Window};
+use tauri::{App, Manager, Wry};
 use std::fs;
 #[cfg(debug_assertions)]
 use log4rs::append::console::ConsoleAppender;
@@ -84,13 +84,13 @@ fn setup(app: &mut App<Wry>) {
     });
 }
 
-#[command]
+/*#[command]
 async fn close_splashscreen(window: Window<Wry>) {
     if let Some(splashscreen) = window.get_window("splashscreen") {
         splashscreen.close().unwrap();
     }
     window.get_window("main").unwrap().show().unwrap();
-}
+}*/
 
 fn main() {
     let context = tauri::generate_context!();
@@ -114,8 +114,7 @@ fn main() {
             host_delete_host,
             host_insert_host,
             host_set_host,
-            host_update_host,
-            close_splashscreen
+            host_update_host
         ])
         .run(context)
         .expect("error while running tauri application");

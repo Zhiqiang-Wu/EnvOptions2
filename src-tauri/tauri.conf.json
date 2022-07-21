@@ -4,8 +4,7 @@
         "beforeBuildCommand": "",
         "beforeDevCommand": "",
         "devPath": "http://localhost:8000",
-        "distDir": "../dist",
-        "withGlobalTauri": true
+        "distDir": "../dist"
     },
     "package": {
         "productName": "EnvOptions",
@@ -58,19 +57,7 @@
                 "resizable": true,
                 "title": "Env Options",
                 "width": 800,
-                "visible": false,
                 "center": true
-            },
-            {
-                "title": "Env Options",
-                "width": 400,
-                "height": 200,
-                "decorations": false,
-                "url": "splashscreen.html",
-                "label": "splashscreen",
-                "center": true,
-                "resizable": false,
-                "transparent": true
             }
         ]
     }
