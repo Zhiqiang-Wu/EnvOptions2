@@ -31,12 +31,6 @@ export default defineConfig({
             component: './host',
         },
         {
-            name: 'scan',
-            path: '/scan',
-            icon: 'qrcode',
-            component: './scan',
-        },
-        {
             name: 'about',
             path: '/about',
             icon: 'infoCircle',

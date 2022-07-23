@@ -4,7 +4,6 @@ windows_subsystem = "windows"
 )]
 
 mod env;
-mod scan;
 mod host;
 
 use tauri::{App, Manager, Wry};
@@ -19,7 +18,6 @@ use log4rs::encode::pattern::PatternEncoder;
 use log::LevelFilter;
 use rusqlite::Connection;
 use env::{env_list_envs, env_set_env, env_delete_env, env_insert_env, env_update_env};
-use scan::{scan_key_press};
 use host::{host_list_hosts, host_delete_host, host_insert_host, host_set_host, host_update_host};
 
 pub struct MyState {
@@ -109,7 +107,6 @@ fn main() {
             env_set_env,
             env_delete_env,
             env_insert_env,
-            scan_key_press,
             host_list_hosts,
             host_delete_host,
             host_insert_host,
