@@ -19,28 +19,28 @@
         "umi:dev": "max dev"
     },
     "dependencies": {
-        "@ant-design/icons": "^4.7.0",
-        "@ant-design/pro-components": "^1.1.3",
-        "@tauri-apps/api": "^1.0.2",
-        "@umijs/max": "^4.0.8",
-        "ahooks": "^3.5.2",
-        "antd": "^4.21.5",
-        "immutable": "^4.1.0",
-        "lodash": "^4.17.21",
-        "nanoid": "^4.0.0",
-        "redux-actions": "^2.6.5",
-        "reselect": "^4.1.6"
+        "@ant-design/icons": "4.7.0",
+        "@ant-design/pro-components": "1.1.14",
+        "@tauri-apps/api": "1.0.2",
+        "@umijs/max": "4.0.8",
+        "ahooks": "3.5.2",
+        "antd": "4.21.7",
+        "immutable": "4.1.0",
+        "lodash": "4.17.21",
+        "nanoid": "4.0.0",
+        "redux-actions": "2.6.5",
+        "reselect": "4.1.6"
     },
     "devDependencies": {
-        "@tauri-apps/cli": "^1.0.5",
-        "@types/react": "^18.0.0",
-        "@types/react-dom": "^18.0.0",
-        "husky": "^8.0.1",
-        "lint-staged": "^13.0.3",
-        "prettier": "^2",
-        "prettier-plugin-organize-imports": "^2",
-        "prettier-plugin-packagejson": "^2",
-        "typescript": "^4.1.2"
+        "@tauri-apps/cli": "1.0.5",
+        "@types/react": "18.0.15",
+        "@types/react-dom": "18.0.6",
+        "husky": "8.0.1",
+        "lint-staged": "13.0.3",
+        "prettier": "2.7.1",
+        "prettier-plugin-organize-imports": "2.3.4",
+        "prettier-plugin-packagejson": "2.2.18",
+        "typescript": "4.7.4"
     },
     "engines": {
         "node": "=16"
