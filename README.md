@@ -15,6 +15,12 @@
 -   ![](resources/env.svg) Manage env
 -   ![](resources/hosts.svg) Manage hosts
 
+## Screenshot
+
+![env](./resources/screenshot1.png)
+
+![hosts](./resources/screenshot2.png)
+
 ## Language
 
 [![rust](https://skillicons.dev/icons?i=rust)](https://www.rust-lang.org/) [![typescript](https://skillicons.dev/icons?i=typescript)](https://www.typescriptlang.org/)
