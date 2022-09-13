@@ -8,7 +8,7 @@
 
 # Env Options
 
-![](https://img.shields.io/github/package-json/v/Zhiqiang-Wu/EnvOptions2) ![](https://img.shields.io/github/downloads/Zhiqiang-Wu/EnvOptions2/total) ![](https://img.shields.io/github/workflow/status/Zhiqiang-Wu/EnvOptions2/Publish) ![](https://img.shields.io/github/license/Zhiqiang-Wu/EnvOptions2)
+![](https://img.shields.io/github/package-json/v/Zhiqiang-Wu/EnvOptions2) ![](https://img.shields.io/github/downloads/Zhiqiang-Wu/EnvOptions2/total) ![](https://img.shields.io/github/workflow/status/Zhiqiang-Wu/EnvOptions2/Publish) ![](https://img.shields.io/github/license/Zhiqiang-Wu/EnvOptions2) ![visitors](https://visitor-badge.glitch.me/badge?page_id=Zhiqiang-Wu.EnvOptions2)
 
 ![](resources/tools.svg) Env options is a tool.
 
