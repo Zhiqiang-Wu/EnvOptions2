@@ -22,7 +22,7 @@
         "@ant-design/icons": "^4.7.0",
         "@ant-design/pro-components": "^1.1.3",
         "@tauri-apps/api": "^1.0.2",
-        "@umijs/max": "^4.0.11",
+        "@umijs/max": "^4.0.20",
         "ahooks": "^3.7.0",
         "antd": "^4.22.3",
         "immutable": "^4.1.0",
