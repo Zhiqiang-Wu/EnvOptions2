@@ -1,11 +1,9 @@
-import React from 'react';
-import { Modal, Form, Input } from 'antd';
 import { useMemoizedFn } from 'ahooks';
+import { Form, Input, Modal } from 'antd';
 
 const { Item, useForm } = Form;
 
 const InsertModal = ({ visible, onOk, onCancel, loading }) => {
-
     const [form] = useForm();
 
     const afterClose = useMemoizedFn(() => {
@@ -15,8 +13,8 @@ const InsertModal = ({ visible, onOk, onCancel, loading }) => {
     return (
         <Modal
             confirmLoading={loading}
-            visible={visible}
-            title='Insert'
+            title="Insert"
+            open={visible}
             centered={true}
             okText={'Ok'}
             cancelText={'Cancel'}
@@ -29,13 +27,14 @@ const InsertModal = ({ visible, onOk, onCancel, loading }) => {
         >
             <Form form={form} onFinish={onOk} labelCol={{ span: 4 }}>
                 <Item
-                    name='ip'
-                    label='ip'
+                    name="ip"
+                    label="ip"
                     required
                     rules={[
                         { required: true, message: 'ip is required' },
                         {
-                            pattern: /^(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/,
+                            pattern:
+                                /^(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/,
                             message: 'format error',
                         },
                     ]}
@@ -43,8 +42,8 @@ const InsertModal = ({ visible, onOk, onCancel, loading }) => {
                     <Input disabled={loading} />
                 </Item>
                 <Item
-                    name='realm'
-                    label='realm'
+                    name="realm"
+                    label="realm"
                     required
                     rules={[{ required: true, message: 'realm is required' }]}
                 >

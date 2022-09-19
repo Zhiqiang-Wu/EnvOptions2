@@ -1,12 +1,10 @@
-import React from 'react';
-import { Modal, Form, Input, Button, Space } from 'antd';
 import { open } from '@tauri-apps/api/dialog';
 import { useMemoizedFn } from 'ahooks';
+import { Button, Form, Input, Modal, Space } from 'antd';
 
 const { Item, useForm } = Form;
 
 const InsertModal = ({ visible = true, onOk, onCancel, loading }) => {
-
     const [form] = useForm();
 
     const afterClose = useMemoizedFn(() => {
@@ -36,9 +34,9 @@ const InsertModal = ({ visible = true, onOk, onCancel, loading }) => {
     return (
         <Modal
             confirmLoading={loading}
-            visible={visible}
+            open={visible}
             centered={true}
-            title='Insert'
+            title="Insert"
             okText={'Ok'}
             cancelText={'Cancel'}
             onOk={form.submit}
@@ -50,16 +48,16 @@ const InsertModal = ({ visible = true, onOk, onCancel, loading }) => {
         >
             <Form form={form} labelCol={{ span: 4 }} onFinish={onOk}>
                 <Item
-                    name='name'
-                    label='name'
+                    name="name"
+                    label="name"
                     required
                     rules={[{ required: true, message: 'name is required' }]}
                 >
                     <Input disabled={loading} />
                 </Item>
                 <Item
-                    name='value'
-                    label='value'
+                    name="value"
+                    label="value"
                     required
                     rules={[{ required: true, message: 'value is required' }]}
                 >
@@ -67,8 +65,12 @@ const InsertModal = ({ visible = true, onOk, onCancel, loading }) => {
                 </Item>
                 <Item wrapperCol={{ offset: 4 }}>
                     <Space>
-                        <Button disabled={loading} onClick={directory}>directory</Button>
-                        <Button disabled={loading} onClick={file}>file</Button>
+                        <Button disabled={loading} onClick={directory}>
+                            directory
+                        </Button>
+                        <Button disabled={loading} onClick={file}>
+                            file
+                        </Button>
                     </Space>
                 </Item>
             </Form>

@@ -1,10 +1,9 @@
-import { Modal, Form, Input } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, Input, Modal } from 'antd';
+import { useEffect } from 'react';
 
 const { Item, useForm } = Form;
 
 const EditModal = ({ visible, onCancel, loading, onOk, data }) => {
-
     const [form] = useForm();
 
     useEffect(() => {
@@ -20,8 +19,8 @@ const EditModal = ({ visible, onCancel, loading, onOk, data }) => {
     return (
         <Modal
             confirmLoading={loading}
-            title='Edit'
-            visible={visible}
+            title="Edit"
+            open={visible}
             centered={true}
             okText={'Ok'}
             cancelText={'Cancel'}
@@ -32,17 +31,18 @@ const EditModal = ({ visible, onCancel, loading, onOk, data }) => {
             }}
         >
             <Form labelCol={{ span: 4 }} onFinish={onOk} form={form}>
-                <Item name='id' hidden>
+                <Item name="id" hidden>
                     <Input disabled={loading} />
                 </Item>
                 <Item
-                    label='ip'
-                    name='ip'
+                    label="ip"
+                    name="ip"
                     required
                     rules={[
                         { required: true, message: 'ip is required' },
                         {
-                            pattern: /^(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/,
+                            pattern:
+                                /^(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/,
                             message: 'format error',
                         },
                     ]}
@@ -50,8 +50,8 @@ const EditModal = ({ visible, onCancel, loading, onOk, data }) => {
                     <Input disabled={loading} />
                 </Item>
                 <Item
-                    label='realm'
-                    name='realm'
+                    label="realm"
+                    name="realm"
                     required
                     rules={[{ required: true, message: 'realm is required' }]}
                 >

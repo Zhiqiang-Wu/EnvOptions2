@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
-import { Modal, Input, Space, Button, Row, Typography, Col } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { useSafeState, useMemoizedFn, useCreation } from 'ahooks';
-import { nanoid } from 'nanoid';
 import { open } from '@tauri-apps/api/dialog';
+import { useCreation, useMemoizedFn, useSafeState } from 'ahooks';
+import { Button, Col, Input, Modal, Row, Space, Typography } from 'antd';
+import { nanoid } from 'nanoid';
+import { useEffect } from 'react';
 
 const EditModal = ({ visible, onCancel, data, onOk, loading }) => {
-
-    const [input, setInput] = useSafeState<Array<{ id, value }>>([]);
+    const [input, setInput] = useSafeState<Array<{ id; value }>>([]);
 
     const [selectedId, setSelectedId] = useSafeState<string | null>(null);
 
@@ -16,19 +15,21 @@ const EditModal = ({ visible, onCancel, data, onOk, loading }) => {
     });
 
     const removeValue = useMemoizedFn((id) => {
-        setInput(input.filter(value => value.id !== id));
+        setInput(input.filter((value) => value.id !== id));
     });
 
     const directory = useMemoizedFn(() => {
         open({ directory: true }).then((result) => {
             if (result) {
                 if (selectedId) {
-                    setInput(input.map((value) => {
-                        if (value.id === selectedId) {
-                            return { id: value.id, value: result };
-                        }
-                        return value;
-                    }));
+                    setInput(
+                        input.map((value) => {
+                            if (value.id === selectedId) {
+                                return { id: value.id, value: result };
+                            }
+                            return value;
+                        }),
+                    );
                 } else {
                     setInput([...input, { id: nanoid(), value: result }]);
                 }
@@ -37,18 +38,22 @@ const EditModal = ({ visible, onCancel, data, onOk, loading }) => {
     });
 
     const onFinish = useMemoizedFn(() => {
-        const value = input.filter((obj) => obj.value.trim())
-            .map((obj) => obj.value + ';').join('');
+        const value = input
+            .filter((obj) => obj.value.trim())
+            .map((obj) => obj.value + ';')
+            .join('');
         onOk(value);
     });
 
     const onInputChange = useMemoizedFn((event) => {
-        setInput(input.map((value) => {
-            if (value.id === selectedId) {
-                return { id: value.id, value: event.target.value };
-            }
-            return value;
-        }));
+        setInput(
+            input.map((value) => {
+                if (value.id === selectedId) {
+                    return { id: value.id, value: event.target.value };
+                }
+                return value;
+            }),
+        );
     });
 
     const directoryButtonDisabled = useCreation(() => {
@@ -57,10 +62,13 @@ const EditModal = ({ visible, onCancel, data, onOk, loading }) => {
 
     useEffect(() => {
         if (visible && data.value) {
-            const values = data.value.split(';').filter((value) => value).map((value) => ({
-                value,
-                id: nanoid(),
-            }));
+            const values = data.value
+                .split(';')
+                .filter((value) => value)
+                .map((value) => ({
+                    value,
+                    id: nanoid(),
+                }));
             setInput(values);
         }
     }, [visible, data]);
@@ -68,8 +76,8 @@ const EditModal = ({ visible, onCancel, data, onOk, loading }) => {
     return (
         <Modal
             confirmLoading={loading}
-            visible={visible}
-            title='Edit'
+            open={visible}
+            title="Edit"
             centered
             onOk={onFinish}
             onCancel={onCancel}
@@ -77,36 +85,41 @@ const EditModal = ({ visible, onCancel, data, onOk, loading }) => {
             cancelText={'Cancel'}
         >
             <Row gutter={20} wrap={false}>
-                <Col flex='auto'>
-                    <Space direction='vertical' style={{ width: '100%' }}>
-                        {
-                            input.map((obj) => (
-                                <Row gutter={10} key={obj.id} wrap={false} align='middle'>
-                                    <Col flex='auto'>
-                                        <Input
-                                            disabled={loading}
-                                            value={obj.value}
-                                            onFocus={() => setSelectedId(obj.id)}
-                                            onBlur={() => setSelectedId(null)}
-                                            onChange={onInputChange}
+                <Col flex="auto">
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                        {input.map((obj) => (
+                            <Row
+                                gutter={10}
+                                key={obj.id}
+                                wrap={false}
+                                align="middle"
+                            >
+                                <Col flex="auto">
+                                    <Input
+                                        disabled={loading}
+                                        value={obj.value}
+                                        onFocus={() => setSelectedId(obj.id)}
+                                        onBlur={() => setSelectedId(null)}
+                                        onChange={onInputChange}
+                                    />
+                                </Col>
+                                <Col flex="none">
+                                    <Typography.Link disabled={loading}>
+                                        <MinusCircleOutlined
+                                            style={{ fontSize: 22 }}
+                                            onClick={() => removeValue(obj.id)}
                                         />
-                                    </Col>
-                                    <Col flex='none'>
-                                        <Typography.Link disabled={loading}>
-                                            <MinusCircleOutlined
-                                                style={{ fontSize: 22 }}
-                                                onClick={() => removeValue(obj.id)}
-                                            />
-                                        </Typography.Link>
-                                    </Col>
-                                </Row>
-                            ))
-                        }
+                                    </Typography.Link>
+                                </Col>
+                            </Row>
+                        ))}
                     </Space>
                 </Col>
-                <Col flex='none'>
-                    <Space direction='vertical'>
-                        <Button onClick={addValue} disabled={loading}>Add value</Button>
+                <Col flex="none">
+                    <Space direction="vertical">
+                        <Button onClick={addValue} disabled={loading}>
+                            Add value
+                        </Button>
                         <Button
                             disabled={directoryButtonDisabled}
                             onMouseDown={(e) => {
