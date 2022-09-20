@@ -76,6 +76,7 @@ const HostView = ({
                         selectedRowKeys,
                         onChange: onSelectedChange,
                     }}
+                    pagination={{ hideOnSinglePage: true }}
                 />
             </div>
         </Spin>

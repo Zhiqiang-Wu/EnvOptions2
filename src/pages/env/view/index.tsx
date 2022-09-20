@@ -84,6 +84,7 @@ const EnvView = ({
                         selectedRowKeys,
                         onChange: onSelectedChange,
                     }}
+                    pagination={{ hideOnSinglePage: true }}
                 />
             </div>
         </Spin>
