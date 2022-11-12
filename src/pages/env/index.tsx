@@ -1,127 +1,189 @@
-import EnvView from '@/pages/env/view';
-import React from 'react';
-import { useCreation, useMemoizedFn, useMount, useSafeState, useBoolean } from 'ahooks';
+import {
+    DELETE_ENV,
+    INSERT_ENV,
+    LIST_ENVS,
+    SET_ENV,
+    UPDATE_ENV,
+} from '@/actions/actionTypes';
 import useDvaEffect from '@/hooks/useDvaEffect';
-import { useSelector } from '@umijs/max';
-import { createSelector } from 'reselect';
-import { LIST_ENVS, INSERT_ENV, DELETE_ENV, SET_ENV, UPDATE_ENV } from '@/actions/actionTypes';
-import { message } from 'antd';
-import lodash from 'lodash';
-import InsertModal from '@/pages/env/insert-modal';
 import EditModal from '@/pages/env/edit-modal';
 import EditModal2 from '@/pages/env/edit-modal-2';
+import InsertModal from '@/pages/env/insert-modal';
+import EnvView from '@/pages/env/view';
+import { useSelector } from '@umijs/max';
+import {
+    useBoolean,
+    useCreation,
+    useMemoizedFn,
+    useMount,
+    useSafeState,
+} from 'ahooks';
+import { message } from 'antd';
+import lodash from 'lodash';
+import { createSelector } from 'reselect';
 
 const EnvPage = () => {
-
-    const { listEnvs, setEnv, insertEnv, deleteEnv, updateEnv } = useDvaEffect();
+    const { listEnvs, setEnv, insertEnv, deleteEnv, updateEnv } =
+        useDvaEffect();
 
     const [dataSource, setDataSource] = useSafeState<Array<Env>>([]);
 
     const [editEnv, setEditEnv] = useSafeState<any>({});
 
-    const { envViewLoading, insertModalLoading, editModalLoading } = useSelector((state) => ({
-        envViewLoading: createSelector([
-            (state) => state.loading.effects[LIST_ENVS],
-            (state) => state.loading.effects[DELETE_ENV],
-            (state) => state.loading.effects[SET_ENV],
-        ], (listEnvsLoading, deleteEnvLoading, setEnvLoading) => {
-            return !!listEnvsLoading || !!deleteEnvLoading || !!setEnvLoading;
-        })(state),
-        insertModalLoading: createSelector([
-            (state) => state.loading.effects[INSERT_ENV],
-        ], (insertEnvLoading) => {
-            return !!insertEnvLoading;
-        })(state),
-        editModalLoading: createSelector([
-            (state) => state.loading.effects[UPDATE_ENV],
-        ], (updateEnvLoading) => {
-            return !!updateEnvLoading;
-        })(state),
-    }));
+    const { envViewLoading, insertModalLoading, editModalLoading } =
+        useSelector((state) => ({
+            envViewLoading: createSelector(
+                [
+                    (state) => state.loading.effects[LIST_ENVS],
+                    (state) => state.loading.effects[DELETE_ENV],
+                    (state) => state.loading.effects[SET_ENV],
+                ],
+                (listEnvsLoading, deleteEnvLoading, setEnvLoading) => {
+                    return (
+                        !!listEnvsLoading ||
+                        !!deleteEnvLoading ||
+                        !!setEnvLoading
+                    );
+                },
+            )(state),
+            insertModalLoading: createSelector(
+                [(state) => state.loading.effects[INSERT_ENV]],
+                (insertEnvLoading) => {
+                    return !!insertEnvLoading;
+                },
+            )(state),
+            editModalLoading: createSelector(
+                [(state) => state.loading.effects[UPDATE_ENV]],
+                (updateEnvLoading) => {
+                    return !!updateEnvLoading;
+                },
+            )(state),
+        }));
 
-    const [insertModalVisible, { setTrue: showInsertModal, setFalse: hideInsertModal }] = useBoolean(false);
+    const [
+        insertModalVisible,
+        { setTrue: showInsertModal, setFalse: hideInsertModal },
+    ] = useBoolean(false);
 
-    const [editModalVisible, { setTrue: showEditModal, setFalse: hideEditModal }] = useBoolean(false);
+    const [
+        editModalVisible,
+        { setTrue: showEditModal, setFalse: hideEditModal },
+    ] = useBoolean(false);
 
-    const [editModalVisible2, { setTrue: showEditModal2, setFalse: hideEditModal2 }] = useBoolean(false);
+    const [
+        editModalVisible2,
+        { setTrue: showEditModal2, setFalse: hideEditModal2 },
+    ] = useBoolean(false);
 
-    const onInsertModalOk = useMemoizedFn(({ name, value }: { name: string, value: string }) => {
-        name = name.trim();
-        value = value.trim();
-
-        const exists = dataSource.find((env) => {
-            return env.name === name && env.value === value;
+    const sorted = useMemoizedFn((dataSource) => {
+        const obj = lodash.groupBy(dataSource, (env) => {
+            return env.name;
         });
-        if (exists) {
-            message.error('Exists');
-            return;
-        }
-
-        const regExpandSzNames = dataSource.filter((env) => env.type === 'REG_EXPAND_SZ').map((env) => env.name.toLowerCase());
-        if (regExpandSzNames.includes(name.toLowerCase())) {
-            message.error('Name invalid');
-            return;
-        }
-
-        insertEnv({ name, value }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
+        const dataSourceSorted: Array<any> = [];
+        for (const objKey in obj) {
+            if (obj.hasOwnProperty(objKey)) {
+                const arr = obj[objKey];
+                dataSourceSorted.push(...arr);
             }
-            hideInsertModal();
-            return listEnvs();
-        }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            setDataSource(result.data);
-        }).catch((err) => {
-            message.error(err.message);
-        });
+        }
+        return dataSourceSorted;
     });
 
+    const onInsertModalOk = useMemoizedFn(
+        ({ name, value }: { name: string; value: string }) => {
+            const name2: string = name.trim();
+            const value2: string = value.trim();
+
+            const exists = dataSource.find((env) => {
+                return env.name === name2 && env.value === value2;
+            });
+            if (exists) {
+                message.error('Exists');
+                return;
+            }
+
+            const regExpandSzNames = dataSource
+                .filter((env) => env.type === 'REG_EXPAND_SZ')
+                .map((env) => env.name.toLowerCase());
+            if (regExpandSzNames.includes(name2.toLowerCase())) {
+                message.error('Name invalid');
+                return;
+            }
+
+            insertEnv({ name: name2, value: value2 })
+                .then((result) => {
+                    if (result.code !== 200000) {
+                        throw new Error(result.message);
+                    }
+                    hideInsertModal();
+                    return listEnvs();
+                })
+                .then((result) => {
+                    if (result.code !== 200000) {
+                        throw new Error(result.message);
+                    }
+                    setDataSource(sorted(result.data));
+                })
+                .catch((err) => {
+                    message.error(err.message);
+                });
+        },
+    );
+
     const onEditModalOk = useMemoizedFn(({ id, name, value, selected }) => {
-        name = name.trim();
-        value = value.trim();
+        const name2: string = name.trim();
+        const value2: string = value.trim();
 
         const exists = dataSource.find((env) => {
-            return env.name === name && env.value === value;
+            return env.name === name2 && env.value === value2;
         });
         if (exists) {
             message.error('Exists');
             return;
         }
 
-        updateEnv({ id, name, value, selected }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            hideEditModal();
-            return listEnvs();
-        }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            setDataSource(result.data);
-        }).catch((err) => {
-            message.error(err.message);
-        });
+        updateEnv({ id, name: name2, value: value2, selected })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                hideEditModal();
+                return listEnvs();
+            })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                setDataSource(sorted(result.data));
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     });
 
     const onEditModalOk2 = useMemoizedFn((v) => {
-        updateEnv({ id: editEnv.id, name: editEnv.name, value: v, selected: editEnv.selected }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            hideEditModal2();
-            return listEnvs();
-        }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            setDataSource(result.data);
-        }).catch((err) => {
-            message.error(err.message);
-        });
+        updateEnv({
+            id: editEnv.id,
+            name: editEnv.name,
+            value: v,
+            selected: editEnv.selected,
+        })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                hideEditModal2();
+                return listEnvs();
+            })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                setDataSource(sorted(result.data));
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     });
 
     const deleteButtonDisabled = useMemoizedFn((env: Env) => {
@@ -145,7 +207,11 @@ const EnvPage = () => {
         return env.type === 'REG_EXPAND_SZ';
     });
 
-    const onSelectedChange = useMemoizedFn((ids: Array<Number>) => {
+    const selectedRowKeys = useCreation(() => {
+        return dataSource.filter((env) => env.selected).map((env) => env.id);
+    }, [dataSource]);
+
+    const onSelectedChange = useMemoizedFn((ids: Array<number>) => {
         let id;
         let selected;
         if (selectedRowKeys.length > ids.length) {
@@ -156,39 +222,41 @@ const EnvPage = () => {
             selected = true;
         }
         const host: any = dataSource.find((host) => host.id === id);
-        setEnv({ selected, name: host.name, value: host.value }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            return listEnvs();
-        }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            setDataSource(result.data);
-        }).catch((err) => {
-            message.error(err.message);
-        });
+        setEnv({ selected, name: host.name, value: host.value })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                return listEnvs();
+            })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                setDataSource(sorted(result.data));
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     });
 
-    const selectedRowKeys = useCreation(() => {
-        return dataSource.filter((env) => env.selected).map((env) => env.id);
-    }, [dataSource]);
-
     const onDelete = useMemoizedFn((env: Env) => {
-        deleteEnv(env.id).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            return listEnvs();
-        }).then((result) => {
-            if (result.code !== 200000) {
-                throw new Error(result.message);
-            }
-            setDataSource(result.data);
-        }).catch((err) => {
-            message.error(err);
-        });
+        deleteEnv(env.id)
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                return listEnvs();
+            })
+            .then((result) => {
+                if (result.code !== 200000) {
+                    throw new Error(result.message);
+                }
+                setDataSource(sorted(result.data));
+            })
+            .catch((err) => {
+                message.error(err);
+            });
     });
 
     useMount(() => {
@@ -197,7 +265,7 @@ const EnvPage = () => {
                 message.error(result.message);
                 return;
             }
-            setDataSource(result.data);
+            setDataSource(sorted(result.data));
         });
     });
 
